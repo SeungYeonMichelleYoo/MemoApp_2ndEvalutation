@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5432F13428BF702D00DC8096 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5432F13328BF702D00DC8096 /* MainTableViewCell.swift */; };
+		5432F13728BF77C100DC8096 /* RealmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5432F13628BF77C100DC8096 /* RealmModel.swift */; };
+		5470F0AC28BF963100119788 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 5470F0AB28BF963100119788 /* Realm */; };
+		5470F0AE28BF963100119788 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5470F0AD28BF963100119788 /* RealmSwift */; };
+		5470F0B028BF997E00119788 /* UserMemoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5470F0AF28BF997E00119788 /* UserMemoRepository.swift */; };
+		54A5089728BF330E00C099C7 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A5089628BF330E00C099C7 /* BaseView.swift */; };
+		54A5089928BF331600C099C7 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A5089828BF331600C099C7 /* BaseViewController.swift */; };
+		54A5089C28BF339500C099C7 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 54A5089B28BF339500C099C7 /* SnapKit */; };
+		54A5089E28BF368500C099C7 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A5089D28BF368500C099C7 /* MainView.swift */; };
+		54A508A228BF36A900C099C7 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A508A128BF36A900C099C7 /* MainViewController.swift */; };
 		54D8AD0228BEF21400E6880A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D8AD0128BEF21400E6880A /* AppDelegate.swift */; };
 		54D8AD0428BEF21400E6880A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D8AD0328BEF21400E6880A /* SceneDelegate.swift */; };
 		54D8AD0628BEF21400E6880A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D8AD0528BEF21400E6880A /* ViewController.swift */; };
@@ -16,6 +26,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5432F13328BF702D00DC8096 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
+		5432F13628BF77C100DC8096 /* RealmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmModel.swift; sourceTree = "<group>"; };
+		5470F0AF28BF997E00119788 /* UserMemoRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMemoRepository.swift; sourceTree = "<group>"; };
+		54A5089628BF330E00C099C7 /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
+		54A5089828BF331600C099C7 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		54A5089D28BF368500C099C7 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		54A508A128BF36A900C099C7 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		54D8ACFE28BEF21400E6880A /* MemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		54D8AD0128BEF21400E6880A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		54D8AD0328BEF21400E6880A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -31,12 +48,34 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5470F0AE28BF963100119788 /* RealmSwift in Frameworks */,
+				5470F0AC28BF963100119788 /* Realm in Frameworks */,
+				54A5089C28BF339500C099C7 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5432F13228BF701000DC8096 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				54A508A128BF36A900C099C7 /* MainViewController.swift */,
+				54A5089D28BF368500C099C7 /* MainView.swift */,
+				5432F13328BF702D00DC8096 /* MainTableViewCell.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		5432F13528BF77AF00DC8096 /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				5432F13628BF77C100DC8096 /* RealmModel.swift */,
+				5470F0AF28BF997E00119788 /* UserMemoRepository.swift */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
 		54D8ACF528BEF21400E6880A = {
 			isa = PBXGroup;
 			children = (
@@ -56,6 +95,10 @@
 		54D8AD0028BEF21400E6880A /* MemoApp */ = {
 			isa = PBXGroup;
 			children = (
+				54A5089628BF330E00C099C7 /* BaseView.swift */,
+				54A5089828BF331600C099C7 /* BaseViewController.swift */,
+				5432F13528BF77AF00DC8096 /* Realm */,
+				5432F13228BF701000DC8096 /* Main */,
 				54D8AD0128BEF21400E6880A /* AppDelegate.swift */,
 				54D8AD0328BEF21400E6880A /* SceneDelegate.swift */,
 				54D8AD0528BEF21400E6880A /* ViewController.swift */,
@@ -83,6 +126,11 @@
 			dependencies = (
 			);
 			name = MemoApp;
+			packageProductDependencies = (
+				54A5089B28BF339500C099C7 /* SnapKit */,
+				5470F0AB28BF963100119788 /* Realm */,
+				5470F0AD28BF963100119788 /* RealmSwift */,
+			);
 			productName = MemoApp;
 			productReference = 54D8ACFE28BEF21400E6880A /* MemoApp.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +159,10 @@
 				Base,
 			);
 			mainGroup = 54D8ACF528BEF21400E6880A;
+			packageReferences = (
+				54A5089A28BF339500C099C7 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				5470F0AA28BF963100119788 /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
 			productRefGroup = 54D8ACFF28BEF21400E6880A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -138,9 +190,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				54A508A228BF36A900C099C7 /* MainViewController.swift in Sources */,
+				54A5089928BF331600C099C7 /* BaseViewController.swift in Sources */,
+				5432F13428BF702D00DC8096 /* MainTableViewCell.swift in Sources */,
+				54A5089E28BF368500C099C7 /* MainView.swift in Sources */,
+				5432F13728BF77C100DC8096 /* RealmModel.swift in Sources */,
 				54D8AD0628BEF21400E6880A /* ViewController.swift in Sources */,
+				5470F0B028BF997E00119788 /* UserMemoRepository.swift in Sources */,
 				54D8AD0228BEF21400E6880A /* AppDelegate.swift in Sources */,
 				54D8AD0428BEF21400E6880A /* SceneDelegate.swift in Sources */,
+				54A5089728BF330E00C099C7 /* BaseView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +353,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -321,6 +381,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -356,6 +417,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5470F0AA28BF963100119788 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.20.0;
+			};
+		};
+		54A5089A28BF339500C099C7 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5470F0AB28BF963100119788 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5470F0AA28BF963100119788 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		5470F0AD28BF963100119788 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5470F0AA28BF963100119788 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		54A5089B28BF339500C099C7 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 54A5089A28BF339500C099C7 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 54D8ACF628BEF21400E6880A /* Project object */;
 }
