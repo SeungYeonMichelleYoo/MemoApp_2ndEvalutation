@@ -39,7 +39,7 @@ class MainTableViewCell: UITableViewCell {
     private func layout() {
         
         [titleLabel, contentLabel].forEach {
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         }
         
         titleLabel.snp.makeConstraints { make in
