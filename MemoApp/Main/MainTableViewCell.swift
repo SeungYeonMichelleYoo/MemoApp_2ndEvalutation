@@ -13,15 +13,23 @@ class MainTableViewCell: UITableViewCell {
     lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor.white
-        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.font = UIFont.boldSystemFont(ofSize: 16)
+        return label
+    }()
+    
+    //MARK: - 날짜 라벨
+    lazy var dateLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.lightGray
+        label.font = UIFont.boldSystemFont(ofSize: 13)
         return label
     }()
     
     //MARK: - 내용 라벨
     lazy var contentLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.white
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.textColor = UIColor.lightGray
+        label.font = UIFont.systemFont(ofSize: 13)
         return label
     }()
     
@@ -29,6 +37,7 @@ class MainTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         layout()
+        self.contentView.backgroundColor = .darkGray
     }
     
     required init?(coder: NSCoder) {
@@ -38,18 +47,24 @@ class MainTableViewCell: UITableViewCell {
     //MARK: - subview 추가 및 제약조건
     private func layout() {
         
-        [titleLabel, contentLabel].forEach {
+        [titleLabel, dateLabel, contentLabel].forEach {
             self.contentView.addSubview($0)
         }
         
         titleLabel.snp.makeConstraints { make in
-            make.leadingMargin.equalTo(self.safeAreaLayoutGuide).inset(8)
+            make.leadingMargin.equalTo(self.contentView).inset(8)
             make.top.equalTo(self.safeAreaLayoutGuide).inset(8)
             make.rightMargin.equalTo(self.safeAreaLayoutGuide).inset(8)
         }
         
-        contentLabel.snp.makeConstraints { make in
+        dateLabel.snp.makeConstraints { make in
             make.leadingMargin.equalTo(self.safeAreaLayoutGuide).inset(8)
+            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.rightMargin.equalTo(self.safeAreaLayoutGuide).inset(8)
+        }
+        
+        contentLabel.snp.makeConstraints { make in
+            make.leadingMargin.equalTo(dateLabel.snp.trailing).offset(8)
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
             make.rightMargin.equalTo(self.safeAreaLayoutGuide).inset(8)
         }
