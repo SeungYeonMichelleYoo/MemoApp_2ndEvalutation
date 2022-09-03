@@ -30,5 +30,19 @@ class UserMemoRepositoryType {
         }
     }
     
+    func addMemo(title: String, content: String) {
+        let data = UserMemo(memoTitle: title, memoContent: content, memoDate: Date())
+
+        do {
+            try localRealm.write {
+                localRealm.add(data)
+            }
+        } catch let error {
+            print(error)
+        }
+    }
+    
+    
+    
 }
 

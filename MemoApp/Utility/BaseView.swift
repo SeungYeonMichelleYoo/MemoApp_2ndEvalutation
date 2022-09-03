@@ -12,7 +12,7 @@ class BaseView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-//        configureUI()
+        configureUI()
         setConstraints()
     }
     
@@ -20,9 +20,8 @@ class BaseView: UIView {
         fatalError()
     }
     
-//    func configureUI() {
-//        self.backgroundColor = UIColor.black
-//    }
+    func configureUI() {
+    }
     
     func setConstraints() {}
 }
