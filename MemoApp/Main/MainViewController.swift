@@ -1,4 +1,4 @@
-//
+
 //  MainViewController.swift
 //  MemoApp
 //
@@ -9,13 +9,18 @@ import UIKit
 import SnapKit
 import RealmSwift
 
-class MainViewController: BaseViewController, UISearchControllerDelegate, UISearchBarDelegate {
+class MainViewController: BaseViewController {
     var model = UserMemo()
     
     let repository = UserMemoRepositoryType()
     
+    //MARK: - searchController
     var searchController: UISearchController!
     
+    //필터링 되어서 나온 대상
+    var text: String = ""
+    
+    //MARK: - UI 요소 배치
     lazy var mainTableView: UITableView = {
         let tableview = UITableView()
         tableview.backgroundColor = .darkGray
@@ -27,22 +32,22 @@ class MainViewController: BaseViewController, UISearchControllerDelegate, UISear
         return btn
     }()
     
-    //여러군데에서 테이블뷰 갱신코드 쓰지 않아도 되게끔 하는 코드
+    //MARK: - 여러군데에서 테이블뷰 갱신코드 쓰지 않아도 되게끔 하는 코드
     var tasks: Results<UserMemo>! {
         didSet {
             mainTableView.reloadData()
             print("Tasks Changed")
             
-            navigationItem.title = "\(tasks.count)개의 메모"
+            self.navigationItem.title = "\(repository.fetch().count)개의 메모"
             //memoCount : 3개 숫자마다 , 넣는거 필요 (numberformatter)
         }
     }
     
-    var _resultsTableController: ResultsTableViewController? = nil
-    
+    //MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        
+        view.backgroundColor = .black
         fetchRealm()
         
         //만약 task = nil -> firstvc 띄우기 아닐경우 해당화면에서 시작.
@@ -57,14 +62,13 @@ class MainViewController: BaseViewController, UISearchControllerDelegate, UISear
             view.isOpaque = true
         }
         
-        setupSearchController()
         setupTableView()
         
         view.addSubview(mainTableView)
         view.addSubview(addMemoBtn)
         print(documentDirectoryPath()?.path) //realm 경로 확인
         
-        mainTableView.snp.remakeConstraints { make in
+        mainTableView.snp.makeConstraints { make in
             make.leading.bottom.trailing.equalTo(view.safeAreaLayoutGuide).inset(8)
             make.top.equalTo(view.safeAreaLayoutGuide).offset(8)
         }
@@ -76,49 +80,43 @@ class MainViewController: BaseViewController, UISearchControllerDelegate, UISear
         }
         
         //MARK: - navigation title 설정 (평소 large title, 메모 작성시 중앙 작게)
-        
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.backgroundColor = .red
+        setupSearchController()
         
-        //        navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: .white]
+        //navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: .white]
         
         addMemoBtn.addTarget(self, action: #selector(addMemoBtnClicked), for: .touchUpInside)
+        
+        print("fixedCount: \(repository.fetchFilterByFixed(fixed: true).count)")
+        print("non-fixedCount: \(repository.fetchFilterByFixed(fixed: false).count)")
+        
     }
+    
     @objc func addMemoBtnClicked() {
         //화면전환 코드 (메모 작성으로 넘어감)
         self.navigationController?.pushViewController(WriteViewController(), animated: true)
     }
     
     func setupSearchController() {
-        let searchController = UISearchController(searchResultsController: nil) //nil인 이유: 결과VC를 따로 하지 X
+        let searchController = UISearchController(searchResultsController: nil) //결과VC
         searchController.searchBar.placeholder = "검색"
         searchController.searchBar.setValue("취소", forKey: "cancelButtonText")
-//        searchController.hidesNavigationBarDuringPresentation = false
-        
+        searchController.hidesNavigationBarDuringPresentation = true
         
         //searchBar에 text가 업데이트될 때마다 불리는 메소드
         searchController.searchResultsUpdater = self
         
         self.navigationItem.searchController = searchController
-//        self.navigationItem.hidesSearchBarWhenScrolling = false
-        
-//        let searchingModel: UserMemo = tasks
-//
-//        let text: String = "\(searchingModel.beerNameKr)(\(searchingModel.beerNameEn))" // ex) 제주 위트 에일(JEJU Wit ale)
-//        let attributeString = NSMutableAttributedString(string: text) // 텍스트 일부분 색상, 폰트 변경 - https://icksw.tistory.com/152
-//        // 문자열에서 원하는 문자의 인덱스 찾는 방법 - t.ly/ci4z
-//        var textFirstIndex: Int = 0 // 검색중인 키워드가 가장 처음으로 나온 인덱스를 저장할 변수 선언.
-//        if let textFirstRange = text.range(of: "\(searchingKeyword)", options: .caseInsensitive) { // 검색중인 키워드가 있을 때에만 색상 변경 - 검색중인 키워드가 가장 처음으로 일치하는 문자열의 범위를 알아낼 수 있음. (caseInsensitive:대소문자 구분X)
-//            textFirstIndex = text.distance(from: text.startIndex, to: textFirstRange.lowerBound) // 거리(인덱스) 구해서 저장.
-//
-//            attributeString.addAttribute(.foregroundColor, value: UIColor.subYellow, range: NSRange(location: textFirstIndex, length: searchingKeyword.count)) // 텍스트 색상(yellow) 변경.
-//            attributeString.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: cell.beerName.font.pointSize), range: NSRange(location: textFirstIndex, length: searchingKeyword.count)) // 기존 사이즈 변경 없이 bold처리 : https://stackoverflow.com/questions/39999093/swift-programmatically-make-uilabel-bold-without-changing-its-size
-//            cell.beerName.attributedText = attributeString // ex) "제주" 위트 에일(JEJU Wit ale)
-//            cell.selectionStyle = .none // 테이블뷰 cell 선택시 배경색상 없애기 : https://gonslab.tistory.com/41 |
-//
-//        }
+        self.navigationItem.hidesSearchBarWhenScrolling = false
     }
+    
+    //MARK: - 검색화면 스크롤시 키보드 내리기
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        self.navigationItem.searchController?.searchBar.resignFirstResponder()
+    }
+    
     func setupTableView() {
         mainTableView.delegate = self
         mainTableView.dataSource = self
@@ -129,15 +127,19 @@ class MainViewController: BaseViewController, UISearchControllerDelegate, UISear
         mainTableView.backgroundColor = .clear
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("text: \(text)")
         fetchRealm()
     }
     
     func fetchRealm() {
-        tasks = repository.fetch()
-        print(tasks.count)
+        if self.navigationItem.searchController?.isActive == true {
+            self.tasks = self.repository.fetchFilterinSearch(text)
+        } else {
+            tasks = repository.fetch()
+            print(tasks.count)
+        }
     }
     
 }
@@ -145,7 +147,14 @@ class MainViewController: BaseViewController, UISearchControllerDelegate, UISear
 extension MainViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
-        dump(searchController.searchBar.text)
+        self.text = searchController.searchBar.text!
+        //        if (text == "") {
+        //            self.tasks = self.repository.fetch()
+        //        } else {
+        //tasks 안에 검색된 결과가 들어감
+        self.tasks = self.repository.fetchFilterinSearch(text)
+        //        }
+        mainTableView.reloadData()
     }
 }
 
@@ -153,29 +162,47 @@ extension MainViewController: UISearchResultsUpdating {
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        if self.navigationItem.searchController?.isActive == true {
+            return 1
+        } else {
+            if repository.fetchFilterByFixed(fixed: true).count > 0 {
+                return 2
+            } else { return 1 }
+        }
     }
     
     //MARK: - 섹션 타이틀
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return "고정된 메모"
+            if self.navigationItem.searchController?.isActive == true {
+                return "\(tasks.count)개 찾음"
+            } else if repository.fetchFilterByFixed(fixed: true).count > 0 {
+                return "고정된 메모"
+            } else {
+                return "메모"
+            }
         case 1:
             return "메모"
         default:
             print("out of index")
             return ""
         }
+        
     }
     
     //MARK: - 섹션에 해당하는 행 개수 표현
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         //memoCount(전체개수)가 1~5개일 때 고정된 메모 개수로 반영. 6개 이상일 때는 고정된 메모 5개.
         if section == 0 {
-            return tasks.count > 5 ? 5 : tasks.count
+            if self.navigationItem.searchController?.isActive == true {
+                return tasks.count
+            } else {
+                let fixedCount = repository.fetchFilterByFixed(fixed: true).count
+                return fixedCount > 0 ? fixedCount > 5 ? 5 : fixedCount : repository.fetch().count
+            }
         } else {
-            return tasks.count > 5 ? tasks.count - 5 : tasks.count
+            return repository.fetchFilterByFixed(fixed: false).count
         }
     }
     
@@ -183,10 +210,24 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     //MARK: - cellForRowAt
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = mainTableView.dequeueReusableCell(withIdentifier: "MainTableViewCell", for: indexPath) as! MainTableViewCell
-        cell.titleLabel.text = tasks[indexPath.row].memoTitle
-        print("content: \(tasks[indexPath.row].memoContent)")
-        cell.contentLabel.text = tasks[indexPath.row].memoContent
-        cell.dateLabel.text = getDateFormat(memodate: tasks[indexPath.row].memoDate)
+        
+        var memo: UserMemo!
+        if indexPath.section == 0 { //section = 0 일 때 고정된 메모 or 메모.
+            if self.navigationItem.searchController?.isActive == true { //search중에는 무조건 section이 하나
+                memo = tasks[indexPath.row]
+            } else {
+                let fixedCount = repository.fetchFilterByFixed(fixed: true).count
+                memo = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true)[indexPath.row] : repository.fetch()[indexPath.row]
+            }
+        } else { //section = 1일 때 무조건 고정된 메모 존재. 나머지 고정되지 않은 메모 표시
+            memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
+        }
+        
+        cell.titleLabel.text = memo.memoTitle
+        print("content: \(memo.memoContent)")
+        cell.contentLabel.text = memo.memoContent
+        cell.dateLabel.text = getDateFormat(memodate: memo.memoDate)
+        
         return cell
     }
     
@@ -195,11 +236,27 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return 50.0
     }
     
-    //
+    //MARK: - didSelectoRowAt
+    // 섹션이 0 일 경우
+    // case3 1)검색결과 2)고정된 메모 3)메모
+    // 섹션이 1 일 경우
+    // case1 메모 (고정되지 않은 메모임)
+    
+    //각 섹션에 대한 데이터들 , 그리고 indexpath.row(행 번호) 를 writeVC에 전달.
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //화면전환 코드 (해당 메모 수정으로 넘어감)
         let vc = WriteViewController()
-        vc.tasks = tasks
+        if indexPath.section == 0 { //section = 0 일 때 고정된 메모 or 메모.
+            if self.navigationItem.searchController?.isActive == true { //search중에는 무조건 section이 하나
+                vc.tasks = tasks
+                vc.navTitle = "검색"
+            } else {
+                let fixedCount = repository.fetchFilterByFixed(fixed: true).count
+                vc.tasks = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true) : repository.fetch()
+            }
+        } else { //section = 1일 때 무조건 고정된 메모 존재. 나머지 고정되지 않은 메모 표시
+            vc.tasks = repository.fetchFilterByFixed(fixed: false)
+        }
         vc.index = indexPath.row
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -217,9 +274,29 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: - 왼쪽 swipe시 고정
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        var memo: UserMemo!
+        
+        let alert = UIContextualAction(style: .normal, title: "") { [self] action, view, completionHander in
+            showAlertMessage(title: "최대 5개의 메모까지 고정할 수 있습니다.")
+        }
+        
+        if indexPath.section == 0 { //section = 0 일 때 고정된 메모 or 메모.
+            if self.navigationItem.searchController?.isActive == true {
+                memo = tasks[indexPath.row]
+            } else {
+                let fixedCount = repository.fetchFilterByFixed(fixed: true).count
+                memo = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true)[indexPath.row] : repository.fetch()[indexPath.row]
+            }
+        } else { //section = 1일 때 무조건 고정된 메모 존재. 나머지 고정되지 않은 메모 표시
+            if repository.fetchFilterByFixed(fixed: true).count > 4 {
+                return UISwipeActionsConfiguration(actions: [alert])
+            }
+            memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
+        }
+        
         let fix = UIContextualAction(style: .normal, title: "고정")  { [self] action, view, completionHandler in
-            //            repository.delete(item: self.tasks[indexPath.row])
-            //            self.fetchRealm()
+            repository.updateFixed(item: memo)
+            self.fetchRealm()
         }
         
         fix.backgroundColor = .orange
@@ -228,37 +305,31 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: - 오른쪽 swipe시 삭제
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let delete = UIContextualAction(style: .normal, title: "삭제")  { [self] action, view, completionHandler in
-            repository.delete(item: self.tasks[indexPath.row])
-            //            self.fetchRealm()
-        }
+        var memo: UserMemo!
         
-        delete.backgroundColor = .systemRed
-        return UISwipeActionsConfiguration(actions: [delete])
-    }
-    
-}
-
-//MARK: - Searchbar 검색시 나타나는 테이블
-class ResultsTableViewController: UITableViewController {
-    var items = [String] ()
-    let CELLID = "CELLID"
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.CELLID)
-    }
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.items.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: self.CELLID, for: indexPath)
-        cell.textLabel?.text = self.items[indexPath.row]
-        return cell
+        if indexPath.section == 0 { //section = 0 일 때 고정된 메모 or 메모.
+            if self.navigationItem.searchController?.isActive == true {
+                memo = tasks[indexPath.row] } else {
+                    let fixedCount = repository.fetchFilterByFixed(fixed: true).count
+                    memo = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true)[indexPath.row] : repository.fetch()[indexPath.row]
+                } } else { //section = 1일 때 무조건 고정된 메모 존재. 나머지 고정되지 않은 메모 표시
+                    memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
+                }
+        
+        
+        let alert = UIAlertController(title: "삭제하시겠습니까?", message: nil, preferredStyle: .alert)
+        let showAlert = UIContextualAction(style: .normal, title: "삭제")  { [self] action, view, completionHandler in
+            present(alert, animated: true)
+        }
+        let delete = UIAlertAction(title: "OK", style: .default) { (action) in
+            self.repository.delete(item: memo)
+            self.fetchRealm()
+        }
+        alert.addAction(delete)
+        
+        
+        showAlert.backgroundColor = .systemRed
+        return UISwipeActionsConfiguration(actions: [showAlert])
     }
     
 }
