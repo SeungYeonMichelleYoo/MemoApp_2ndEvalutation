@@ -12,8 +12,6 @@ class WriteView: BaseView {
     
     lazy var textView: UITextView = {
         let textView = UITextView()
-        textView.backgroundColor = .black
-        textView.textColor = .white
         textView.font = .systemFont(ofSize: 18)
         return textView
     }()

@@ -55,8 +55,18 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
         addBackButton()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        //MARK: - 다크모드 대응
+        if traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .black
+        } else {
+            view.backgroundColor = .white
+        }
+    }
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
-               navigationItem.rightBarButtonItems = [completeButton, shareButton]
+        navigationItem.rightBarButtonItems = [completeButton, shareButton]
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {

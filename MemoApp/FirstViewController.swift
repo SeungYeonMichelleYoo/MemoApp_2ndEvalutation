@@ -19,8 +19,12 @@ class FirstViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        firstView.backgroundColor = .darkGray
+        //MARK: - 다크모드 대응
+        if traitCollection.userInterfaceStyle == .dark {
+            firstView.backgroundColor = .black
+        } else {
+            firstView.backgroundColor = .white
+        }
   
         //밑 배경 투명 처리
         view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.25)

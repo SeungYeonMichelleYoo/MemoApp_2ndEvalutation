@@ -60,13 +60,13 @@ class MainTableViewCell: UITableViewCell {
         dateLabel.snp.makeConstraints { make in
             make.leadingMargin.equalTo(self.contentView).inset(8)
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
-//          priority 찾아보기!!
+            //          priority 찾아보기!!
         }
         
         contentLabel.snp.makeConstraints { make in
             make.leadingMargin.equalTo(dateLabel.snp.trailing).offset(20)
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
-//            make.rightMargin.equalTo(self.contentView).inset(8)
+            //            make.rightMargin.equalTo(self.contentView).inset(8)
         }
         
     }

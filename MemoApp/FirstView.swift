@@ -22,7 +22,7 @@ class FirstView: BaseView {
         let label = UILabel()
         label.numberOfLines = 0
         label.text = "처음 오셨군요!\n환영합니다:)\n\n당신만의 메모를 작성하고\n관리해보세요!"
-        label.textColor = UIColor.orange
+        label.textColor = UIColor.white
         label.font = UIFont.boldSystemFont(ofSize: 20)
         return label
     }()
@@ -52,7 +52,7 @@ class FirstView: BaseView {
         [contentLabel, okButton].forEach {
             popupView.addSubview($0)
         }
-    
+        
     }
     override func setConstraints() {
         popupView.snp.makeConstraints { make in
@@ -62,12 +62,13 @@ class FirstView: BaseView {
         
         contentLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
-            make.leadingMargin.equalToSuperview().offset(8)
+            make.centerX.equalToSuperview()
             make.width.height.equalTo(200)
         }
         
         okButton.snp.makeConstraints { make in
             make.top.equalTo(contentLabel.snp.bottom).offset(8)
+            make.centerX.equalToSuperview()
             make.width.equalTo(contentLabel)
             make.height.equalTo(50)
         }

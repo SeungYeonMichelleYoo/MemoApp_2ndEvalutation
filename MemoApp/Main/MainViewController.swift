@@ -27,7 +27,7 @@ class MainViewController: BaseViewController {
         return tableview
     }()
     
-    let addMemoBtn: addMemoButton = {
+    lazy var addMemoBtn: addMemoButton = {
         let btn = addMemoButton()
         return btn
     }()
@@ -44,25 +44,28 @@ class MainViewController: BaseViewController {
             let memoCount = numberFormatter.string(for: repository.fetch().count) ?? "0"
             
             self.navigationItem.title = "\(memoCount)개의 메모"
-
+            
         }
     }
     
     //MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //MARK: - 다크모드 대응
         if traitCollection.userInterfaceStyle == .dark {
             view.backgroundColor = .black
         } else {
             view.backgroundColor = .white
         }
+        
         fetchRealm()
         
         //만약 task = nil -> firstvc 띄우기 아닐경우 해당화면에서 시작.
         if tasks.count == 0 {
             //firstview 팝업 띄우기
             let vc = FirstViewController(nibName: "FirstViewController", bundle: nil)
-            vc.modalPresentationStyle = .fullScreen
+            vc.modalPresentationStyle = .overFullScreen
             self.present(vc, animated: false)
             
             //밑 배경 투명 처리
@@ -90,16 +93,27 @@ class MainViewController: BaseViewController {
         //MARK: - navigation title 설정
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
-//        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.green]
-
-        setupSearchController()
         
-        //navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: .white]
+        setupSearchController()
         
         addMemoBtn.addTarget(self, action: #selector(addMemoBtnClicked), for: .touchUpInside)
         
         print("fixedCount: \(repository.fetchFilterByFixed(fixed: true).count)")
         print("non-fixedCount: \(repository.fetchFilterByFixed(fixed: false).count)")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        //MARK: - 다크모드 대응
+        if traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .black
+        } else {
+            view.backgroundColor = .white
+        }
+        
+        //MARK: - navigation title 설정
+        navigationItem.largeTitleDisplayMode = .always
+        navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     @objc func addMemoBtnClicked() {
@@ -156,12 +170,8 @@ extension MainViewController: UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
         self.text = searchController.searchBar.text!
-        //        if (text == "") {
-        //            self.tasks = self.repository.fetch()
-        //        } else {
         //tasks 안에 검색된 결과가 들어감
         self.tasks = self.repository.fetchFilterinSearch(text)
-        //        }
         mainTableView.reloadData()
     }
 }
@@ -175,7 +185,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
             if repository.fetchFilterByFixed(fixed: true).count > 0 {
                 return 2
-            } else { return 1 }
+            } else {
+                return repository.fetch().count == 0 ? 0 : 1
+            }
         }
     }
     
@@ -252,6 +264,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
         }
         
+        //검색하다가 메인으로 돌아와도 색깔 바뀌지 않게 세팅
         if self.navigationItem.searchController?.isActive == false {
             cell.titleLabel.text = memo.memoTitle
             cell.contentLabel.text = memo.memoContent
@@ -271,9 +284,9 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     //MARK: - didSelectoRowAt
     // 섹션이 0 일 경우
-    // case3 1)검색결과 2)고정된 메모 3)메모
+    // case 3개: 1)검색결과 2)고정된 메모 3)메모
     // 섹션이 1 일 경우
-    // case1 메모 (고정되지 않은 메모임)
+    // case 1갸: 메모 (고정되지 않은 메모임)
     
     //각 섹션에 대한 데이터들 , 그리고 indexpath.row(행 번호) 를 writeVC에 전달.
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -346,10 +359,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 memo = tasks[indexPath.row] } else {
                     let fixedCount = repository.fetchFilterByFixed(fixed: true).count
                     memo = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true)[indexPath.row] : repository.fetch()[indexPath.row]
-                } } else { //section = 1일 때 무조건 고정된 메모 존재. 나머지 고정되지 않은 메모 표시
-                    memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
                 }
-    
+        } else { //section = 1일 때 무조건 고정된 메모 존재. 나머지 고정되지 않은 메모 표시
+            memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
+        }
+        
         
         let alert = UIAlertController(title: "삭제하시겠습니까?", message: nil, preferredStyle: .alert)
         let showAlert = UIContextualAction(style: .normal, title: "삭제")  { [self] action, view, completionHandler in
