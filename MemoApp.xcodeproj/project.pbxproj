@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		542C786A28C3844500F7D17A /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 542C786928C3844500F7D17A /* IQKeyboardManagerSwift */; };
-		542C786D28C3AC9B00F7D17A /* SearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542C786C28C3AC9B00F7D17A /* SearchController.swift */; };
-		542C786F28C3ACA900F7D17A /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542C786E28C3ACA900F7D17A /* SearchView.swift */; };
 		543139F928C33C6400A5BFB0 /* WriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543139F828C33C6400A5BFB0 /* WriteView.swift */; };
 		5432F13428BF702D00DC8096 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5432F13328BF702D00DC8096 /* MainTableViewCell.swift */; };
 		5432F13728BF77C100DC8096 /* RealmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5432F13628BF77C100DC8096 /* RealmModel.swift */; };
@@ -35,8 +33,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		542C786C28C3AC9B00F7D17A /* SearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchController.swift; sourceTree = "<group>"; };
-		542C786E28C3ACA900F7D17A /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		543139F828C33C6400A5BFB0 /* WriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriteView.swift; sourceTree = "<group>"; };
 		5432F13328BF702D00DC8096 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 		5432F13628BF77C100DC8096 /* RealmModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmModel.swift; sourceTree = "<group>"; };
@@ -75,15 +71,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		542C786B28C3AC6E00F7D17A /* SearchBar */ = {
-			isa = PBXGroup;
-			children = (
-				542C786C28C3AC9B00F7D17A /* SearchController.swift */,
-				542C786E28C3ACA900F7D17A /* SearchView.swift */,
-			);
-			path = SearchBar;
-			sourceTree = "<group>";
-		};
 		5432F13228BF701000DC8096 /* Main */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,7 +134,6 @@
 		54D8AD0028BEF21400E6880A /* MemoApp */ = {
 			isa = PBXGroup;
 			children = (
-				542C786B28C3AC6E00F7D17A /* SearchBar */,
 				54C8142128C2F8830011F148 /* Utility */,
 				5432F13228BF701000DC8096 /* Main */,
 				54C8141528C2DC3C0011F148 /* CustomView */,
@@ -251,7 +237,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				545AADAE28C0E1E200AB7F51 /* FileManager + Extension.swift in Sources */,
-				542C786D28C3AC9B00F7D17A /* SearchController.swift in Sources */,
 				54C8141828C2DD180011F148 /* addMemoButton.swift in Sources */,
 				54A508A228BF36A900C099C7 /* MainViewController.swift in Sources */,
 				54C8141A28C2EB340011F148 /* WriteViewController.swift in Sources */,
@@ -259,7 +244,6 @@
 				5432F13428BF702D00DC8096 /* MainTableViewCell.swift in Sources */,
 				544E35A928C2557F00E218A6 /* FirstViewController.swift in Sources */,
 				5432F13728BF77C100DC8096 /* RealmModel.swift in Sources */,
-				542C786F28C3ACA900F7D17A /* SearchView.swift in Sources */,
 				54D8AD0628BEF21400E6880A /* ViewController.swift in Sources */,
 				5470F0B028BF997E00119788 /* UserMemoRepository.swift in Sources */,
 				54D8AD0228BEF21400E6880A /* AppDelegate.swift in Sources */,
@@ -414,6 +398,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N67R5W6U5A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MemoApp/Info.plist;
 				INFOPLIST_KEY_NSMainNibFile = Main;
@@ -442,6 +427,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = N67R5W6U5A;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MemoApp/Info.plist;
 				INFOPLIST_KEY_NSMainNibFile = Main;

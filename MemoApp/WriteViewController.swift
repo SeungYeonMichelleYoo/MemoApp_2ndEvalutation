@@ -7,6 +7,7 @@
 import UIKit
 import SnapKit
 import RealmSwift
+import IQKeyboardManagerSwift
 
 class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureRecognizerDelegate {
     
@@ -35,7 +36,6 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
         
         navigationItem.rightBarButtonItems = []
         self.navigationController?.navigationBar.backgroundColor = .darkGray
-        navigationController?.navigationBar.barTintColor = UIColor.green
         
         //MARK: - 스와이프 제스처시 키보드가 내려감으로 저장됨
         self.navigationController?.interactivePopGestureRecognizer?.delegate = self
@@ -56,14 +56,14 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-       navigationItem.rightBarButtonItems = [completeButton, shareButton]
-     }
+               navigationItem.rightBarButtonItems = [completeButton, shareButton]
+    }
     
     func textViewDidEndEditing(_ textView: UITextView) {
         print("textViewEnd")
         saveOrDelete()
     }
-  
+    
     
     func addBackButton() {
         let backButton = UIButton(type: .custom)
@@ -77,24 +77,26 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
         backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backButtonClicked)))
     }
     
+    
+    //MARK: - backButtonClicked()
     @objc func backButtonClicked() {
         print(#function)
         saveOrDelete()
         self.navigationController?.popViewController(animated: true)
     }
      
-    
+    //MARK: - 공유 버튼 클릭시
     @objc func shareBtnClicked() {
-        //        showActivityViewController()
+        saveOrDelete()
+        let shareTitle: String = tasks[index].memoTitle
+        let shareContent: String = tasks[index].memoContent
+        var memocontent = [Any]()
+        memocontent.append(shareTitle)
+        memocontent.append(shareContent)
+        let vc = UIActivityViewController(activityItems: memocontent, applicationActivities: [])
+        self.present(vc, animated: true)
     }
-    //복원하는거처럼 똑같이 해야될듯
-    //
-    //    var memoContent = MainViewController.mainTableView.tasks[indexPath.row].memoContent
-    //    func showActivityViewController(memoContent: memoContent) {
-    //        let vc = UIActivityViewController(activityItems: [memoContent], applicationActivities: [])
-    //        self.present(vc, animated: true)
-    //    }
-    
+        
     @objc func completeBtnClicked() {
         saveOrDelete()
     }

@@ -4,7 +4,7 @@
 //
 //  Created by SeungYeon Yoo on 2022/08/31.
 //
-
+import Foundation //NumberFormatter를 사용하려면 import해야 함
 import UIKit
 import SnapKit
 import RealmSwift
@@ -38,16 +38,24 @@ class MainViewController: BaseViewController {
             mainTableView.reloadData()
             print("Tasks Changed")
             
-            self.navigationItem.title = "\(repository.fetch().count)개의 메모"
-            //memoCount : 3개 숫자마다 , 넣는거 필요 (numberformatter)
+            //MARK: - NumberFormtter (3개 숫자마다 , 넣기)
+            let numberFormatter = NumberFormatter() //NumberFormatter 객체 생성
+            numberFormatter.numberStyle = .decimal
+            let memoCount = numberFormatter.string(for: repository.fetch().count) ?? "0"
+            
+            self.navigationItem.title = "\(memoCount)개의 메모"
+
         }
     }
     
     //MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .black
+        if traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .black
+        } else {
+            view.backgroundColor = .white
+        }
         fetchRealm()
         
         //만약 task = nil -> firstvc 띄우기 아닐경우 해당화면에서 시작.
@@ -70,7 +78,7 @@ class MainViewController: BaseViewController {
         
         mainTableView.snp.makeConstraints { make in
             make.leading.bottom.trailing.equalTo(view.safeAreaLayoutGuide).inset(8)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(8)
+            make.top.equalTo(view.safeAreaLayoutGuide)
         }
         
         addMemoBtn.snp.makeConstraints { make in
@@ -79,10 +87,11 @@ class MainViewController: BaseViewController {
             
         }
         
-        //MARK: - navigation title 설정 (평소 large title, 메모 작성시 중앙 작게)
+        //MARK: - navigation title 설정
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.backgroundColor = .red
+//        self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.green]
+
         setupSearchController()
         
         //navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: .white]
@@ -91,7 +100,6 @@ class MainViewController: BaseViewController {
         
         print("fixedCount: \(repository.fetchFilterByFixed(fixed: true).count)")
         print("non-fixedCount: \(repository.fetchFilterByFixed(fixed: false).count)")
-        
     }
     
     @objc func addMemoBtnClicked() {
@@ -215,6 +223,27 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 { //section = 0 일 때 고정된 메모 or 메모.
             if self.navigationItem.searchController?.isActive == true { //search중에는 무조건 section이 하나
                 memo = tasks[indexPath.row]
+                let attributeString4Title = NSMutableAttributedString(string: memo.memoTitle) // 텍스트 일부분 색상, 폰트 변경
+                let attributeString4Content = NSMutableAttributedString(string: memo.memoContent)
+                
+                var textFirstIndex4Title: Int = 0 // 검색중인 키워드가 가장 처음으로 나온 인덱스를 저장할 변수 선언.
+                var textFirstIndex4Content: Int = 0
+                if let textFirstRange4Title = memo.memoTitle.range(of: "\(self.text)", options: .caseInsensitive) { // 검색중인 키워드가 있을 때에만 색상 변경 - 검색중인 키워드가 가장 처음으로 일치하는 문자열의 범위를 알아낼 수 있음. (caseInsensitive:대소문자 구분X)
+                    textFirstIndex4Title = memo.memoTitle.distance(from: text.startIndex, to: textFirstRange4Title.lowerBound) // 거리(인덱스) 구해서 저장.
+                    
+                    attributeString4Title.addAttribute(.foregroundColor, value: UIColor.orange, range: NSRange(location: textFirstIndex4Title, length: self.text.count)) // 텍스트 색상 변경
+                    attributeString4Title.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: cell.titleLabel.font.pointSize), range: NSRange(location: textFirstIndex4Title, length: self.text.count)) // 기존 사이즈 변경 없이 bold처리
+                    cell.titleLabel.attributedText = attributeString4Title
+                    cell.selectionStyle = .none // 테이블뷰 cell 선택시 배경색상 없애기
+                }
+                if let textFirstRange4Content = memo.memoContent.range(of: "\(self.text)", options: .caseInsensitive) { // 검색중인 키워드가 있을 때에만 색상 변경 - 검색중인 키워드가 가장 처음으로 일치하는 문자열의 범위를 알아낼 수 있음. (caseInsensitive:대소문자 구분X)
+                    textFirstIndex4Content = memo.memoContent.distance(from: text.startIndex, to: textFirstRange4Content.lowerBound) // 거리(인덱스) 구해서 저장.
+                    
+                    attributeString4Content.addAttribute(.foregroundColor, value: UIColor.orange, range: NSRange(location: textFirstIndex4Content, length: self.text.count)) // 텍스트 색상 변경
+                    attributeString4Content.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: cell.contentLabel.font.pointSize), range: NSRange(location: textFirstIndex4Content, length: self.text.count)) // 기존 사이즈 변경 없이 bold처리
+                    cell.contentLabel.attributedText = attributeString4Content
+                    cell.selectionStyle = .none // 테이블뷰 cell 선택시 배경색상 없애기
+                }
             } else {
                 let fixedCount = repository.fetchFilterByFixed(fixed: true).count
                 memo = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true)[indexPath.row] : repository.fetch()[indexPath.row]
@@ -223,9 +252,13 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
         }
         
-        cell.titleLabel.text = memo.memoTitle
-        print("content: \(memo.memoContent)")
-        cell.contentLabel.text = memo.memoContent
+        if self.navigationItem.searchController?.isActive == false {
+            cell.titleLabel.text = memo.memoTitle
+            cell.contentLabel.text = memo.memoContent
+            cell.titleLabel.textColor = .white
+            cell.contentLabel.textColor = .lightGray
+        }
+        
         cell.dateLabel.text = getDateFormat(memodate: memo.memoDate)
         
         return cell
@@ -266,7 +299,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         guard let header = view as? UITableViewHeaderFooterView else { return }
         
         header.textLabel?.frame = CGRect(x: 0, y: 0, width: 200, height: header.frame.size.height)
-        header.textLabel?.textColor = UIColor.white
+        header.textLabel?.textColor = traitCollection.userInterfaceStyle == .dark ? .white : .black
         header.textLabel?.font = UIFont.boldSystemFont(ofSize: 20)
         header.textLabel?.textAlignment = .left
     }
@@ -300,6 +333,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         fix.backgroundColor = .orange
+        fix.image = UIImage(systemName: memo.fixed ? "pin.slash.fill" : "pin.fill")
         return UISwipeActionsConfiguration(actions: [fix])
     }
     
@@ -315,7 +349,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 } } else { //section = 1일 때 무조건 고정된 메모 존재. 나머지 고정되지 않은 메모 표시
                     memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
                 }
-        
+    
         
         let alert = UIAlertController(title: "삭제하시겠습니까?", message: nil, preferredStyle: .alert)
         let showAlert = UIContextualAction(style: .normal, title: "삭제")  { [self] action, view, completionHandler in
@@ -327,8 +361,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         }
         alert.addAction(delete)
         
-        
         showAlert.backgroundColor = .systemRed
+        showAlert.image = UIImage(systemName: "trash")
         return UISwipeActionsConfiguration(actions: [showAlert])
     }
     
