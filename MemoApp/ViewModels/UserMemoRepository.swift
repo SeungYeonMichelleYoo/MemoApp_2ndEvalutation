@@ -12,13 +12,41 @@ import RealmSwift
 
 class UserMemoRepositoryType {
     
-    var localRealm = try! Realm()
-    
     //MARK: - 메모 최신순으로 정렬
     func fetch() -> Results<UserMemo> {
         return localRealm.objects(UserMemo.self).sorted(byKeyPath: "memoDate", ascending: false)
     }
     
+//    var localRealm = try! Realm()
+    
+    
+    let config = Realm.Configuration(
+        schemaVersion: 1,
+        
+        migrationBlock: { migration, oldSchemaVersion in
+            if (oldSchemaVersion < 1) {
+                migration.enumerateObjects(ofType: UserMemo.className()) { oldObject, newObject in
+                    newObject!["fixed"] = false
+                }
+            }
+            
+//            Realm.Configuration.defaultConfiguration = config
+        }
+    )
+    let localRealm = try! Realm(configuration: Realm.Configuration(
+        schemaVersion: 1,
+        
+        migrationBlock: { migration, oldSchemaVersion in
+            if (oldSchemaVersion < 1) {
+                migration.enumerateObjects(ofType: UserMemo.className()) { oldObject, newObject in
+                    newObject!["fixed"] = false
+                }
+            }
+            
+//            Realm.Configuration.defaultConfiguration = config
+        }
+    ))
+
     //MARK: - 메모삭제
     func delete(item: UserMemo) {
         do {
