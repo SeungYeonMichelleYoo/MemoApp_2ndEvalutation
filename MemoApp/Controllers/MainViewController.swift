@@ -294,16 +294,20 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let vc = WriteViewController()
         if indexPath.section == 0 { //section = 0 일 때 고정된 메모 or 메모.
             if self.navigationItem.searchController?.isActive == true { //search중에는 무조건 section이 하나
-                vc.tasks = tasks
+//                vc.tasks = tasks
+                vc.memo = tasks[indexPath.row]
                 vc.navTitle = "검색"
             } else {
                 let fixedCount = repository.fetchFilterByFixed(fixed: true).count
-                vc.tasks = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true) : repository.fetch()
+//                vc.tasks = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true) : repository.fetch()
+                vc.memo = fixedCount > 0 ? repository.fetchFilterByFixed(fixed: true)[indexPath.row] : repository.fetch()[indexPath.row]
             }
         } else { //section = 1일 때 무조건 고정된 메모 존재. 나머지 고정되지 않은 메모 표시
-            vc.tasks = repository.fetchFilterByFixed(fixed: false)
+//            vc.tasks = repository.fetchFilterByFixed(fixed: false)
+            vc.memo = repository.fetchFilterByFixed(fixed: false)[indexPath.row]
         }
-        vc.index = indexPath.row
+//        vc.index = indexPath.row
+        
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

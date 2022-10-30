@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import SwiftUI
 
 //realm 관련 여기로 몰아두기(리팩토링)
 
@@ -15,6 +16,10 @@ class UserMemoRepositoryType {
     //MARK: - 메모 최신순으로 정렬
     func fetch() -> Results<UserMemo> {
         return localRealm.objects(UserMemo.self).sorted(byKeyPath: "memoDate", ascending: false)
+    }
+    
+    func checkData(userMemo: UserMemo) -> Bool {
+        return self.localRealm.objects(UserMemo.self).contains(userMemo)
     }
     
 //    var localRealm = try! Realm()
@@ -50,8 +55,10 @@ class UserMemoRepositoryType {
     //MARK: - 메모삭제
     func delete(item: UserMemo) {
         do {
-            try self.localRealm.write {
-                self.localRealm.delete(item)
+            try! self.localRealm.write {
+                if self.checkData(userMemo: item) {
+                    self.localRealm.delete(item)
+                }
             }
         } catch let error {
             print(error)
@@ -59,7 +66,7 @@ class UserMemoRepositoryType {
     }
     
     //MARK: - 메모추가
-    func addMemo(title: String, content: String) {
+    func addMemo(title: String, content: String) -> UserMemo {
         let data = UserMemo(memoTitle: title, memoContent: content, memoDate: Date())
 
         do {
@@ -69,6 +76,7 @@ class UserMemoRepositoryType {
         } catch let error {
             print(error)
         }
+        return data
     }
     
     //MARK: - 서치바에서 텍스트 찾을 때, realm 저장된 메모 내용 중 해당 글씨 들어있는 경우

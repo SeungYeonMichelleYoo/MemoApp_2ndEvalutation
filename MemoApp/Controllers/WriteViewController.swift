@@ -15,12 +15,10 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
     
     private var writeViewModel: WriteVM!
     
-    let repository = UserMemoRepositoryType()
-    
     //tableview 행이 생성되기 전. 아무것도 없는 상태.
-    var index = -1
+//    var index = -1
     
-    var tasks: Results<UserMemo>!
+    var memo: UserMemo = UserMemo()
     
     var navTitle: String = "메모"
     
@@ -36,6 +34,8 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
         
         super.viewDidLoad()
         
+        self.writeViewModel = WriteVM()
+        
         navigationItem.rightBarButtonItems = []
         self.navigationController?.navigationBar.backgroundColor = .darkGray
         
@@ -46,8 +46,9 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
         
         print("\(navigationItem.rightBarButtonItems)")
         
-        if (index != -1) {
-            mainview.textView.text = tasks[index].memoTitle + "\n" + tasks[index].memoContent
+        if (memo.memoTitle != "" ) {
+//            memo = writeViewModel.fetchMemo(index: index)
+            mainview.textView.text = memo.memoTitle + "\n" + memo.memoContent
             print(mainview.textView.text)
         } else {
             //화면 접속하자마자 키보드 올리기
@@ -73,7 +74,7 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
     
     func textViewDidEndEditing(_ textView: UITextView) {
         print("textViewEnd")
-        writeViewModel.saveOrDelete()
+        memo = writeViewModel.saveOrDelete(userMemo: memo, text: mainview.textView.text)
     }
     
     
@@ -89,18 +90,17 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
         backButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backButtonClicked)))
     }
     
-    
     @objc func backButtonClicked() {
         print(#function)
-        writeViewModel.saveOrDelete()
+        memo = writeViewModel.saveOrDelete(userMemo: memo, text: mainview.textView.text)
         self.navigationController?.popViewController(animated: true)
     }
      
-    //MARK: - 공유 버튼 클릭시
     @objc func shareBtnClicked() {
-        writeViewModel.saveOrDelete()
-        let shareTitle: String = tasks[index].memoTitle
-        let shareContent: String = tasks[index].memoContent
+        memo = writeViewModel.saveOrDelete(userMemo: memo, text: mainview.textView.text)
+//        memo = writeViewModel.fetchMemo(index: index)
+        let shareTitle: String = memo.memoTitle
+        let shareContent: String = memo.memoContent
         var memocontent = [Any]()
         memocontent.append(shareTitle)
         memocontent.append(shareContent)
@@ -109,10 +109,6 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
     }
         
     @objc func completeBtnClicked() {
-        writeViewModel.saveOrDelete()
+        memo = writeViewModel.saveOrDelete(userMemo: memo, text: mainview.textView.text)
     }
-    
-    
-    
-
 }
