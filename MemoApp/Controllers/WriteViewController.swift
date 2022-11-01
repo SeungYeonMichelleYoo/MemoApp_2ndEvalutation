@@ -46,7 +46,7 @@ class WriteViewController: BaseViewController, UITextViewDelegate, UIGestureReco
         
         print("\(navigationItem.rightBarButtonItems)")
         
-        if (memo.title != "" ) {
+        if (!memo.title.isEmpty) {
 //            memo = writeViewModel.fetchMemo(index: index)
             mainview.textView.text = memo.title + "\n" + memo.content
             print(mainview.textView.text)
